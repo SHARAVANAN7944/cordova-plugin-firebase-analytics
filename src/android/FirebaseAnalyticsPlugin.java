@@ -14,7 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
-
+import org.json.JSONArray;
+import java.util.ArrayList;
 
 public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
     private static final String TAG = "FirebaseAnalyticsPlugin";
@@ -97,6 +98,13 @@ public class FirebaseAnalyticsPlugin extends ReflectiveCordovaPlugin {
                 bundle.putDouble(key, (Double)value);
             } else if (value instanceof Long) {
                 bundle.putLong(key, (Long)value);
+            } else if (value instanceof JSONArray) {
+                JSONArray jsonArray = (JSONArray)value;
+                ArrayList<Bundle> items = new ArrayList<>();
+                for (int i = 0, n = jsonArray.length(); i < n; i++) {
+                    items.add(parse(jsonArray.getJSONObject(i)));
+                }
+                bundle.putParcelableArrayList(key, items);
             } else {
                 Log.w(TAG, "Value for key " + key + " not one of (String, Integer, Double, Long)");
             }
